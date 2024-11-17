@@ -96,8 +96,8 @@ def do_event():
                     condition_part = ""
 
                   model = dynamic_models.get(table_name.lower())
-                 if model is None:
-                   return render_template("query.html", message=f"模型 {table_name} 不存在。")
+                  if model is None:
+                    return render_template("query.html", message=f"模型 {table_name} 不存在。")
 
     # 構建查詢
     if select_fields == "*":

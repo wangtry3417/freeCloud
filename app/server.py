@@ -1,5 +1,4 @@
 from . import __app,find_db_file
-from flask_sqlalchemy import SQLAlchemy
 
 #可以設置app的名字
 app = _app()

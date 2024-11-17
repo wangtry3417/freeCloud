@@ -106,7 +106,10 @@ def do_event(statement=None):
                 else:
                     raise ValueError("不支援的指令格式。")
             except Exception as e:
-                return render_template("query.html", message=f"錯誤: {str(e)} values={values_turple}")
+                if values_tuple:
+                  return render_template("query.html", message=f"錯誤: {str(e)} values={values_tuple}")
+                else:
+                  return render_template("query.html", message=f"錯誤: {str(e)}")
 
     return "請求方式不支援", 405  # 返回 405 方法不被允許
 

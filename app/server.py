@@ -114,17 +114,17 @@ def try_db():
 
     try:
         # Create Table
-        if "create type.TABLE" in tryDB_input:
+        if "create table" in tryDB_input:
             parts = tryDB_input.split("->")
             if len(parts) == 2:
                 table_name = parts[0].split()[2].strip()
-                fields = eval(parts[1].strip())  # 使用 eval 來解析字典
-                if not isinstance(fields, dict):
-                    return jsonify({"error": "字段格式不正確，應該是字典格式。"}), 400
+                fields = eval(parts[1].strip())  # 使用 eval 來解析元組列表
+                if not isinstance(fields, list):
+                    return jsonify({"error": "字段格式不正確，應該是元組列表。"}), 400
 
                 attributes = {'__tablename__': table_name.lower()}
 
-                for field, field_type in fields.items():
+                for field, field_type in fields:
                     if field_type == "String":
                         attributes[field] = db.Column(db.String(80))
                     elif field_type == "Integer":
@@ -142,7 +142,6 @@ def try_db():
                 db.create_all()
 
                 return jsonify({"message": f"資料表 '{table_name}' 已經建立。"}), 201
-        # Insert
         elif "Insert" in tryDB_input:
             parts = tryDB_input.split("->")
             if len(parts) == 3:

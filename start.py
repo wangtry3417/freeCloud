@@ -12,7 +12,7 @@ if __name__ == "__main__":
 如果不想web server，也可以datatable
 """
 """
-from app.server.models import BaseModel
+from app.models import BaseModel
 from app import db
 
 class User(BaseModel):

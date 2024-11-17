@@ -1,11 +1,11 @@
-from . import __app,find_db_file,db,request,render_template
+from . import _app,find_db_file,db,request,render_template
 from .models import BaseModel
 from sqlalchemy import inspect
 
 #可以設置app的名字
 app = _app()
 #輸入sqlite協定的database文件
-dbFile = find_db_file("test.db")
+dbFile = find_db_file("main.db")
 app.config['SQLALCHEMY_DATABASE_URI'] = dbFile
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)

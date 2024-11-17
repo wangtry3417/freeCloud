@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 def _app(appName=None):
   if appName != None:
@@ -9,4 +10,6 @@ def _app(appName=None):
 def find_db_file(filename) -> str:
   return "sqlite:///"+filename
 
-__all__ = ["__app","find_db_file"]
+db = SQLAlchemy()
+
+__all__ = ["__app","find_db_file","db"]

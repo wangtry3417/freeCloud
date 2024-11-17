@@ -57,18 +57,42 @@ def do_event(statement=None):
             return render_template("query.html", statement=statement, records=records, table_name=table_name)
 
         return render_template("query.html", statement=statement)
-    
-    elif request.method == "POST":
-        if statement == "insert":
-            table_name = request.form.get("table_name")
-            data = request.form.to_dict(flat=False)
-            columns = [k for k in data.keys() if k != 'table_name']
-            values = [data[k][0] for k in columns]
 
-            insert_query = text(f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in columns])})")
-            db.session.execute(insert_query, values)
-            db.session.commit()
-            return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
+    elif request.method == "POST":
+        tryDB_input = request.form.get("tryDB_input")
+        if tryDB_input:
+            try:
+                if "Insert" in tryDB_input:
+                    # 解析 Insert 語句
+                    parts = tryDB_input.split("->")
+                    if len(parts) == 3:
+                        table_name = parts[0].split()[1]  # 取出表名
+                        fields = parts[1].strip().split(",")  # 字段
+                        values = parts[2].strip().strip(';').split(",")  # 值
+
+                        # 構建 INSERT 查詢
+                        insert_query = text(f"INSERT INTO {table_name} ({', '.join(fields)}) VALUES ({', '.join(['?' for _ in values])})")
+                        db.session.execute(insert_query, values)
+                        db.session.commit()
+                        return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
+                    else:
+                        raise ValueError("Insert 語句格式錯誤。")
+
+                elif "using" in tryDB_input:
+                    # 解析 Select 語句
+                    parts = tryDB_input.split(",")
+                    table_name = parts[0].split()[1]  # 取出表名
+                    select_fields = parts[1].strip().split()[2]  # 選擇的字段
+                    condition = parts[2].strip().split("where")[1] if "where" in parts[2] else ""  # 條件
+
+                    # 構建 SELECT 查詢
+                    select_query = text(f"SELECT {select_fields} FROM {table_name} WHERE {condition}")
+                    records = db.session.execute(select_query).fetchall()
+                    return render_template("query.html", statement="查詢結果", records=records, table_name=table_name)
+                else:
+                    raise ValueError("不支援的指令格式。")
+            except Exception as e:
+                return render_template("query.html", message=f"錯誤: {str(e)}")
 
     return "請求方式不支援", 405  # 返回 405 方法不被允許
 

@@ -6,4 +6,7 @@ def __app(appName=None):
   else:
     return Flask(__name__)
 
-__all__ = ["__app"]
+def find_db_file(filename):
+  return filename
+
+__all__ = ["__app","find_db_file"]

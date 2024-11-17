@@ -52,7 +52,7 @@ def do_event(statement=None):
                 return render_template("query.html", message="目前沒有任何資料表。請返回主頁或稍後再試。", show_back_button=True)
 
         elif statement == "selectAll":
-            table_name = request.args.get("table_name")
+            table_name = str(request.args.get("table_name"))
             records = db.session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
             return render_template("query.html", statement=statement, records=records, table_name=table_name)
 

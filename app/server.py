@@ -130,6 +130,39 @@ def do_event():
 
                     records = query.all()
                     return render_template("query.html", statement="查詢結果", records=records, table_name=table_name)
+                elif "create table" in tryDB_input:
+                    parts = tryDB_input.split("->")
+                    if len(parts) == 2:
+                      table_name = parts[0].split()[2].strip()
+                      fields_str = parts[1].strip()
+
+                      # 使用正則表達式解析元組
+                      pattern = r"\('([^']+)',\s*'([^']+)'\)"
+                      fields = re.findall(pattern, fields_str)
+
+                      if not fields:
+                        return render_template("query.html", message="字段不存在。")
+
+                     attributes = {'__tablename__': table_name.lower()}
+
+                     for field, field_type in fields:
+                       if field_type == "String":
+                         attributes[field] = db.Column(db.String(80))
+                       elif field_type == "Integer":
+                         attributes[field] = db.Column(db.Integer)
+                       elif field_type == "Float":
+                         attributes[field] = db.Column(db.Float)
+                       elif field_type == "Boolean":
+                         attributes[field] = db.Column(db.Boolean)
+                       else:
+                         return jsonify({"error": f"不支援的字段類型: {field_type}。"}), 400
+
+                       # 創建新的模型類
+                       new_model = type(table_name, (BaseModel,), attributes)
+                       dynamic_models[table_name.lower()] = new_model
+                       db.create_all()
+
+                       return jsonify({"message": f"資料表 '{table_name}' 已經建立。"}), 201
 
                 else:
                     raise ValueError("不支援的指令格式。")

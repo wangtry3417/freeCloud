@@ -70,7 +70,7 @@ def do_event(statement=None):
                         
                         # 處理值，去除 HTML 編碼
                         values = [
-                            re.sub(r'&#39;|‘|’', "'", value.strip().strip("'"))
+                            html.unescape(value.strip().strip("'"))
                             for value in parts[2].strip().strip(';').split(",")
                         ]
 

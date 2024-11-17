@@ -97,15 +97,6 @@ def do_event():
 
     return "請求方式不支援", 405  # 返回 405 方法不被允許
 
-@app.route("/query/table/<table_name>")
-def query_table(table_name):
-    model = dynamic_models.get(table_name.lower())
-    if model is None:
-        return render_template("query.html", message=f"模型 {table_name} 不存在。")
-
-    records = db.session.query(model).all()
-    return render_template("query.html", table_name=table_name, records=records)
-
 @app.route("/trydb", methods=["POST"])
 def try_db():
     tryDB_input = request.json.get("query")  # 從 JSON 請求中獲取查詢

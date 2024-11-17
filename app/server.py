@@ -72,7 +72,7 @@ def do_event(statement=None):
                         
                         # 處理值，解碼 HTML 編碼並轉換成正確格式
                         values = [
-                            html.unescape(value.strip().strip("'"))
+                            html.unescape(value.strip().strip("'").replace("’", "'").replace("‘", "'"))
                             for value in parts[2].strip().strip(';').split(",")
                         ]
 

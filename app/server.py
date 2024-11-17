@@ -18,7 +18,8 @@ def index():
 def create_model():
     table_name = request.form.get("table_name")
     fields = request.form.get("fields").split(",")
-
+    if not table_name:
+      return "沒有找到資料表的名字"
     # 動態創建模型
     attributes = {'__tablename__': table_name.lower()}
     for field in fields:

@@ -1,5 +1,5 @@
 from . import __app,find_db_file,db,request,render_template
-from .models.base_model import BaseModel
+from .models import BaseModel
 
 #可以設置app的名字
 app = _app()

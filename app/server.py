@@ -70,6 +70,9 @@ def do_event(statement=None):
                         fields = parts[1].strip().split(",")  # 字段
                         values = parts[2].strip().strip(';').split(",")  # 值
 
+                        # 去掉引號並去除空白
+                        values = [value.strip().strip("'") for value in values]
+
                         # 構建 INSERT 查詢
                         insert_query = text(f"INSERT INTO {table_name} ({', '.join(fields)}) VALUES ({', '.join(['?' for _ in values])})")
                         db.session.execute(insert_query, values)

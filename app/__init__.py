@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template
+from flask import Flask,request,render_template,jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 def _app(appName=None):
@@ -12,4 +12,4 @@ def find_db_file(filename) -> str:
 
 db = SQLAlchemy()
 
-__all__ = ["_app","find_db_file","db","request","render_template"]
+__all__ = ["_app","find_db_file","db","request","render_template","jsonify"]

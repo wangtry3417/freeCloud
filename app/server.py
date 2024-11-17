@@ -74,7 +74,7 @@ def do_event(statement=None):
                         values = [
                             re.sub(r'&#39;|‘|’', "'", value.strip().strip("'"))
                             for value in parts[2].strip().strip(';').split(",")
-                        ]  # 去掉引號和空白
+                        ]
 
                         # 確保 values 是元組
                         values_tuple = tuple(values)

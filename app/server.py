@@ -1,7 +1,7 @@
 from . import _app,find_db_file,db,request,render_template
 from .models import BaseModel
 from sqlalchemy import inspect,text
-import html
+import re
 
 #可以設置app的名字
 app = _app()
@@ -72,7 +72,7 @@ def do_event(statement=None):
                         
                         # 處理值，解碼 HTML 編碼並轉換成正確格式
                         values = [
-                            value.strip().strip("'").replace('‘', "'").replace('’', "'")
+                            re.sub(r'&#39;|‘|’', "'", value.strip().strip("'"))
                             for value in parts[2].strip().strip(';').split(",")
                         ]  # 去掉引號和空白
 

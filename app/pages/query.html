@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">查詢語句: {{ statement if statement else '選擇一個資料表' }}</h1>
+        <h1 class="text-center">查詢Database:Query: {{ statement if statement else '選擇一個資料表' }}</h1>
 
         {% if tables %}
             <h2 class="mt-4">可用資料表:</h2>
@@ -22,6 +22,9 @@
             </ul>
         {% elif records %}
             <h2 class="mt-4">資料表 {{ table_name }} 的記錄:</h2>
+            
+            <p>using {{ table_name }} -> 查詢</p>
+            
             <table class="table">
                 <thead>
                     <tr>
@@ -52,6 +55,34 @@
                 {% endfor %}
                 <button type="submit" class="btn btn-primary">插入</button>
             </form>
+            
+            <!-- 按鈕觸發模態框 -->
+            <button type="button" class="btn btn-secondary mt-4" data-toggle="modal" data-target="#tryDBModal">
+                輸入 tryDB 語句
+            </button>
+
+            <!-- 模態框 -->
+            <div class="modal fade" id="tryDBModal" tabindex="-1" role="dialog" aria-labelledby="tryDBModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="tryDBModalLabel">輸入 tryDB 語句</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="tryDBForm">
+                                <div class="form-group">
+                                    <label for="tryDBInput">請輸入指令:</label>
+                                    <textarea class="form-control" id="tryDBInput" rows="4" placeholder='Insert <table.name> -> field1,field2... -> "value1","value2"...; or using <table> , select field -> where <condition>;'></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% elif message %}
             <div class="alert alert-warning" role="alert">
                 {{ message }}

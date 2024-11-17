@@ -44,7 +44,6 @@ def create_model():
 def do_event(statement=None):
     if request.method == "GET":
         if statement is None:
-            # 獲取所有資料表名稱
             inspector = inspect(db.engine)
             tables = inspector.get_table_names()
             if tables:
@@ -64,28 +63,24 @@ def do_event(statement=None):
         if tryDB_input:
             try:
                 if "Insert" in tryDB_input:
-                    # 解析 Insert 語句
                     parts = tryDB_input.split("->")
                     if len(parts) == 3:
-                        table_name = parts[0].split()[1].strip()  # 取出表名並去除空格
-                        fields = [field.strip() for field in parts[1].strip().split(",")]  # 字段
+                        table_name = parts[0].split()[1].strip()
+                        fields = [field.strip() for field in parts[1].strip().split(",")]
                         
-                        # 處理值，解碼 HTML 編碼並轉換成正確格式
+                        # 處理值，去除 HTML 編碼
                         values = [
-                            html.unescape(value.strip().strip("'").replace("’", "'").replace("‘", "'"))
+                            re.sub(r'&#39;|‘|’', "'", value.strip().strip("'"))
                             for value in parts[2].strip().strip(';').split(",")
                         ]
 
-                        # 確保 values 是元組
                         values_tuple = tuple(values)
 
-                        # 檢查 values_tuple 的內容
                         print("Values to insert:", values_tuple)
 
                         # 構建 INSERT 查詢
                         insert_query = text(f"INSERT INTO {table_name} ({', '.join(fields)}) VALUES ({', '.join(['?' for _ in values_tuple])})")
                         
-                        # 執行查詢
                         db.session.execute(insert_query, values_tuple)
                         db.session.commit()
                         return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
@@ -93,13 +88,11 @@ def do_event(statement=None):
                         raise ValueError("Insert 語句格式錯誤。")
 
                 elif "using" in tryDB_input:
-                    # 解析 Select 語句
                     parts = tryDB_input.split(",")
-                    table_name = parts[0].split()[1].strip()  # 取出表名並去除空格
-                    select_fields = parts[1].strip().split()[2]  # 選擇的字段
-                    condition = parts[2].strip().split("where")[1] if "where" in parts[2] else ""  # 條件
+                    table_name = parts[0].split()[1].strip()
+                    select_fields = parts[1].strip().split()[2]
+                    condition = parts[2].strip().split("where")[1] if "where" in parts[2] else ""
 
-                    # 構建 SELECT 查詢
                     select_query = text(f"SELECT {select_fields} FROM {table_name} WHERE {condition}")
                     records = db.session.execute(select_query).fetchall()
                     return render_template("query.html", statement="查詢結果", records=records, table_name=table_name)

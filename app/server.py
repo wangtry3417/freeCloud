@@ -66,16 +66,15 @@ def do_event(statement=None):
                     # 解析 Insert 語句
                     parts = tryDB_input.split("->")
                     if len(parts) == 3:
-                        table_name = parts[0].split()[1]  # 取出表名
-                        fields = parts[1].strip().split(",")  # 字段
-                        values = parts[2].strip().strip(';').split(",")  # 值
-
-                        # 去掉引號並去除空白
-                        values = [value.strip().strip("'") for value in values]
+                        table_name = parts[0].split()[1].strip()  # 取出表名並去除空格
+                        fields = [field.strip() for field in parts[1].strip().split(",")]  # 字段
+                        values = [value.strip().strip("'") for value in parts[2].strip().strip(';').split(",")]  # 值，去掉引號和空白
 
                         # 構建 INSERT 查詢
                         insert_query = text(f"INSERT INTO {table_name} ({', '.join(fields)}) VALUES ({', '.join(['?' for _ in values])})")
-                        db.session.execute(insert_query, values)
+                        
+                        # 將 values 轉換為元組
+                        db.session.execute(insert_query, tuple(values))
                         db.session.commit()
                         return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
                     else:
@@ -84,7 +83,7 @@ def do_event(statement=None):
                 elif "using" in tryDB_input:
                     # 解析 Select 語句
                     parts = tryDB_input.split(",")
-                    table_name = parts[0].split()[1]  # 取出表名
+                    table_name = parts[0].split()[1].strip()  # 取出表名並去除空格
                     select_fields = parts[1].strip().split()[2]  # 選擇的字段
                     condition = parts[2].strip().split("where")[1] if "where" in parts[2] else ""  # 條件
 

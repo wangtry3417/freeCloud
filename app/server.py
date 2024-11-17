@@ -1,6 +1,7 @@
 from . import _app,find_db_file,db,request,render_template
 from .models import BaseModel
 from sqlalchemy import inspect,text
+import html
 
 #可以設置app的名字
 app = _app()
@@ -69,9 +70,9 @@ def do_event(statement=None):
                         table_name = parts[0].split()[1].strip()  # 取出表名並去除空格
                         fields = [field.strip() for field in parts[1].strip().split(",")]  # 字段
                         
-                        # 處理值，轉換成正確格式
+                        # 處理值，解碼 HTML 編碼並轉換成正確格式
                         values = [
-                            value.strip().strip("'").replace('‘', "'").replace('’', "'")
+                            html.unescape(value.strip().strip("'")).replace('‘', "'").replace('’', "'")
                             for value in parts[2].strip().strip(';').split(",")
                         ]  # 去掉引號和空白
 
@@ -102,7 +103,7 @@ def do_event(statement=None):
                 else:
                     raise ValueError("不支援的指令格式。")
             except Exception as e:
-                return render_template("query.html", message=f"錯誤: {str(e)} values={values_tuple}")
+                return render_template("query.html", message=f"錯誤: {str(e)}, values={values_tuple}")
 
     return "請求方式不支援", 405  # 返回 405 方法不被允許
 
@@ -110,6 +111,7 @@ def do_event(statement=None):
 def query_table(table_name):
     records = db.session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
     return render_template("query.html", table_name=table_name, records=records)
+
 
 def run_app(port=5000):
   app.run(host="0.0.0.0",port=5000)

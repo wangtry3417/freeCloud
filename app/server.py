@@ -2,7 +2,7 @@ from . import _app, find_db_file, db, request, render_template, jsonify
 from .models import BaseModel
 from sqlalchemy import inspect
 from sqlalchemy.exc import SQLAlchemyError
-import html
+import html,re
 
 # 可以設置app的名字
 app = _app()

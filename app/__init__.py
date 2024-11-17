@@ -13,4 +13,4 @@ def find_db_file(filename) -> str:
 
 db = SQLAlchemy()
 
-__all__ = ["__app","find_db_file","db","request","render_template","run_app"]
+__all__ = ["_app","find_db_file","db","request","render_template","run_app"]

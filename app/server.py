@@ -74,3 +74,6 @@ def do_event(statement=None):
 def query_table(table_name):
     records = db.session.execute(f"SELECT * FROM {table_name}").fetchall()
     return render_template("query.html", table_name=table_name, records=records)
+
+def run_app(port=5000):
+  app.run(host="0.0.0.0",port=5000)

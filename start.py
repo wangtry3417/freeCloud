@@ -1,4 +1,4 @@
-from .app import run_app
+from app import run_app
 import os
 
 if not os.path.exists("main.db"):

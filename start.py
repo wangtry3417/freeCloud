@@ -12,5 +12,13 @@ if __name__ == "__main__":
 如果不想web server，也可以datatable
 """
 """
-from app.server.models import baseModel
+from app.server.models import BaseModel
+from app import db
+
+class User(BaseModel):
+  __tablename__ = 'user'
+  username = db.Column(db.String(50))
+  email = db.Column(db.String(50))
+db.session.add(User(username='testname',email='someone@example.com'))
+User._commit()
 """

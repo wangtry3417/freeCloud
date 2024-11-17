@@ -118,7 +118,14 @@ def try_db():
             parts = tryDB_input.split("->")
             if len(parts) == 2:
                 table_name = parts[0].split()[2].strip()
-                fields = eval(parts[1].strip())  # 使用 eval 來解析元組列表
+                fields_str = parts[1].strip()
+
+                # 使用 eval 解析元組列表
+                try:
+                    fields = eval(fields_str)
+                except Exception:
+                    return jsonify({"error": "字段格式不正確，應該是元組列表。"}), 400
+
                 if not isinstance(fields, list):
                     return jsonify({"error": "字段格式不正確，應該是元組列表。"}), 400
 
@@ -142,6 +149,7 @@ def try_db():
                 db.create_all()
 
                 return jsonify({"message": f"資料表 '{table_name}' 已經建立。"}), 201
+
         elif "Insert" in tryDB_input:
             parts = tryDB_input.split("->")
             if len(parts) == 3:

@@ -29,7 +29,7 @@ def create_model():
             attributes[name] = db.Column(db.Integer)
         elif field_type == "Float":
             attributes[name] = db.Column(db.Float)
-        elif field_type == "Boolean"
+        elif field_type == "Boolean":
             attributes[name] = db.Column(db.Boolean)
 
     # 創建新的模型類

@@ -12,7 +12,7 @@ db.init_app(app)
 
 @app.route("/")
 def index():
-  return "Hello Page"
+  return render_template("index.html")
 
 @app.route("/create_table", methods=["POST"])
 def create_model():

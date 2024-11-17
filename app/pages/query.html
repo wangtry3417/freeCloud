@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查詢Query</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">查詢語句: {{ statement if statement else '選擇一個資料表' }}</h1>
+
+        {% if tables %}
+            <h2 class="mt-4">可用資料表:</h2>
+            <ul class="list-group">
+                {% for table in tables %}
+                    <li class="list-group-item">
+                        {{ table }}
+                        <a href="/query/table/{{ table }}" class="btn btn-info btn-sm float-right">查詢</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% elif records %}
+            <h2 class="mt-4">資料表 {{ table_name }} 的記錄:</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for column in records[0].keys() %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                        <tr>
+                            {% for value in record %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2 class="mt-4">插入新記錄:</h2>
+            <form action="/query" method="POST">
+                <input type="hidden" name="table_name" value="{{ table_name }}">
+                {% for column in records[0].keys() %}
+                    <div class="form-group">
+                        <label for="{{ column }}">{{ column }}</label>
+                        <input type="text" id="{{ column }}" name="{{ column }}" class="form-control" required>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">插入</button>
+            </form>
+        {% elif message %}
+            <div class="alert alert-warning" role="alert">
+                {{ message }}
+            </div>
+            {% if show_back_button %}
+                <a href="/" class="btn btn-primary">返回主頁</a>
+            {% endif %}
+        {% else %}
+            <p>未找到任何結果，請檢查資料表或稍後再試。</p>
+        {% endif %}
+        
+        <br>
+        <a href="/" class="btn btn-primary">返回主頁</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

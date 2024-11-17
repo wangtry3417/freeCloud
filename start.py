@@ -19,6 +19,6 @@ class User(BaseModel):
   __tablename__ = 'user'
   username = db.Column(db.String(50))
   email = db.Column(db.String(50))
-db.session.add(User(username='testname',email='someone@example.com'))
+User.create(username='testname',email='someone@example.com'))
 User._commit()
 """

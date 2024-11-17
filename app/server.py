@@ -231,6 +231,55 @@ def try_db():
                 else:
                     return jsonify({"error": f"資料表 '{table_name}' 不存在。"}), 404
 
+        # 使用 SELECT 查詢
+        if "using" in tryDB_input:
+            parts = tryDB_input.split(",")
+            if len(parts) == 2:
+                table_name = parts[0].split()[1].strip()
+                select_part = parts[1].strip()
+
+                # 解析 SELECT 部分
+                select_parts = select_part.split("where")
+                fields_part = select_parts[0].replace("select", "").strip()
+                condition_part = select_parts[1].strip() if len(select_parts) > 1 else None
+
+                model = dynamic_models.get(table_name.lower())
+                if model is None:
+                    return jsonify({"error": f"資料表 '{table_name}' 不存在。"}), 404
+
+                # 構建查詢
+                query = db.session.query(model)
+                
+                # 添加字段
+                if fields_part == "*":
+                    pass  # 查詢所有字段
+                else:
+                    fields = [field.strip() for field in fields_part.split(",")]
+                    query = query.with_entities(*[getattr(model, field) for field in fields])
+
+                # 添加條件
+                if condition_part:
+                    condition_parts = condition_part.split()
+                    if len(condition_parts) == 3:
+                        field_name, operator, value = condition_parts
+                        field = getattr(model, field_name, None)
+                        if field is None:
+                            return jsonify({"error": f"字段 '{field_name}' 不存在。"}), 404
+                        if operator == "=":
+                            query = query.filter(field == value.strip("'"))
+                        elif operator == ">":
+                            query = query.filter(field > value.strip("'"))
+                        elif operator == "<":
+                            query = query.filter(field < value.strip("'"))
+                        # 可以擴展更多運算符
+
+                # 獲取查詢結果
+                results = query.all()
+
+                # 格式化結果
+                output = [{field: getattr(row, field) for field in fields} for row in results] if fields_part != "*" else [{column.name: getattr(row, column.name) for column in model.__table__.columns} for row in results]
+
+                return jsonify(output), 200
         else:
             return jsonify({"error": "不支援的指令格式。"}), 400
 

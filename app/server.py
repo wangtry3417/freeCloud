@@ -73,13 +73,16 @@ def do_event(statement=None):
                         values = [
                             value.strip().strip("'").replace('‘', "'").replace('’', "'")
                             for value in parts[2].strip().strip(';').split(",")
-                        ]  # 值，去掉引號和空白
+                        ]  # 去掉引號和空白
+
+                        # 確保 values 是元組
+                        values_tuple = tuple(values)
 
                         # 構建 INSERT 查詢
-                        insert_query = text(f"INSERT INTO {table_name} ({', '.join(fields)}) VALUES ({', '.join(['?' for _ in values])})")
-
-                        # 將 values 轉換為元組格式
-                        db.session.execute(insert_query, tuple(values))
+                        insert_query = text(f"INSERT INTO {table_name} ({', '.join(fields)}) VALUES ({', '.join(['?' for _ in values_tuple])})")
+                        
+                        # 執行查詢
+                        db.session.execute(insert_query, values_tuple)
                         db.session.commit()
                         return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
                     else:
@@ -99,7 +102,7 @@ def do_event(statement=None):
                 else:
                     raise ValueError("不支援的指令格式。")
             except Exception as e:
-                return render_template("query.html", message=f"錯誤: {str(e)} , values={values}")
+                return render_template("query.html", message=f"錯誤: {str(e)} values={values_tuple}")
 
     return "請求方式不支援", 405  # 返回 405 方法不被允許
 
@@ -107,7 +110,6 @@ def do_event(statement=None):
 def query_table(table_name):
     records = db.session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
     return render_template("query.html", table_name=table_name, records=records)
-
 
 def run_app(port=5000):
   app.run(host="0.0.0.0",port=5000)

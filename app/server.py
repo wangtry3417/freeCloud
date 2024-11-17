@@ -11,6 +11,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = dbFile
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+# 用於存儲動態創建的模型
+dynamic_models = {}
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -37,6 +40,7 @@ def create_model():
 
     # 創建新的模型類
     new_model = type(table_name, (BaseModel,), attributes)
+    dynamic_models[table_name.lower()] = new_model  # 保存到字典中
     db.create_all()  # 創建資料表
     return f"資料表 '{table_name}' 已經建立這些欄位: {', '.join(fields)}"
 
@@ -60,8 +64,7 @@ def do_event():
                             for value in parts[2].strip().strip(';').split(",")
                         ]
 
-                        # 動態加載模型
-                        model = db.Model._decl_class_registry.get(table_name.lower())
+                        model = dynamic_models.get(table_name.lower())
                         if model is None:
                             return render_template("query.html", message=f"模型 {table_name} 不存在。")
 
@@ -77,8 +80,7 @@ def do_event():
                     select_fields = parts[1].strip().split()[2]
                     condition = parts[2].strip().split("where")[1] if "where" in parts[2] else ""
 
-                    # 動態查詢模型
-                    model = db.Model._decl_class_registry.get(table_name.lower())
+                    model = dynamic_models.get(table_name.lower())
                     if model is None:
                         return render_template("query.html", message=f"模型 {table_name} 不存在。")
 
@@ -96,11 +98,12 @@ def do_event():
 
 @app.route("/query/table/<table_name>")
 def query_table(table_name):
-    model = db.Model._decl_class_registry.get(table_name.lower())
+    model = dynamic_models.get(table_name.lower())
     if model is None:
         return render_template("query.html", message=f"模型 {table_name} 不存在。")
-    
+
     records = db.session.query(model).all()
     return render_template("query.html", table_name=table_name, records=records)
+    
 def run_app(port=5000):
   app.run(host="0.0.0.0",port=5000)

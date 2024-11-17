@@ -76,19 +76,60 @@ def do_event():
                         return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
 
                 elif "using" in tryDB_input:
-                    parts = tryDB_input.split(",")
-                    table_name = parts[0].split()[1].strip()
-                    select_fields = parts[1].strip().split()[2]
-                    condition = parts[2].strip().split("where")[1] if "where" in parts[2] else ""
+                  parts = tryDB_input.split(",")
+                  if len(parts) != 2:
+                    return render_template("query.html", message="請使用正確格式: using <table_name>, select <fields> [where <condition>]")
 
-                    model = dynamic_models.get(table_name.lower())
-                    if model is None:
-                        return render_template("query.html", message=f"模型 {table_name} 不存在。")
+                  table_name = parts[0].split()[1].strip()
+                  select_part = parts[1].strip()
 
-                    # 執行查詢
-                    query = db.session.query(model).filter(text(condition))
-                    records = query.all()
-                    return render_template("query.html", statement="查詢結果", records=records, table_name=table_name)
+                  if not select_part.startswith("select "):
+                    return render_template("query.html", message="請使用 'select' 開頭的查詢指令")
+
+                  # 檢查是否有 where 條件
+                  if "where" in select_part:
+                    select_fields, condition_part = select_part.split("where", 1)
+                    select_fields = select_fields.replace("select", "").strip()
+                    condition_part = condition_part.strip()
+                  else:
+                    select_fields = select_part.replace("select", "").strip()
+                    condition_part = ""
+
+                  model = dynamic_models.get(table_name.lower())
+                 if model is None:
+                   return render_template("query.html", message=f"模型 {table_name} 不存在。")
+
+    # 構建查詢
+    if select_fields == "*":
+        query = db.session.query(model)
+    else:
+        fields = [field.strip() for field in select_fields.split(",")]
+        query = db.session.query(model).with_entities(*[getattr(model, field) for field in fields if hasattr(model, field)])
+
+    # 處理 where 條件
+    if condition_part:
+        condition_parts = condition_part.strip().split()
+        if len(condition_parts) == 3:
+            field_name, operator, value = condition_parts
+            field = getattr(model, field_name, None)
+            if field is None:
+                return render_template("query.html", message=f"字段 '{field_name}' 不存在。")
+            
+            # 構建 filter 條件
+            if operator == "=":
+                query = query.filter(field == value.strip("'"))
+            elif operator == ">":
+                query = query.filter(field > value.strip("'"))
+            elif operator == "<":
+                query = query.filter(field < value.strip("'"))
+            # 可以擴展更多運算符
+            else:
+                return render_template("query.html", message=f"不支援的運算符 '{operator}'。")
+        else:
+            return render_template("query.html", message="where 條件格式不正確，應為 '<field> <operator> <value>'。")
+
+    records = query.all()
+    return render_template("query.html", statement="查詢結果", records=records, table_name=table_name)
 
                 else:
                     raise ValueError("不支援的指令格式。")

@@ -1,5 +1,6 @@
 from flask import Flask,request,render_template
 from flask_sqlalchemy import SQLAlchemy
+from . import run_app
 
 def _app(appName=None):
   if appName != None:
@@ -12,4 +13,4 @@ def find_db_file(filename) -> str:
 
 db = SQLAlchemy()
 
-__all__ = ["__app","find_db_file","db","request","render_template"]
+__all__ = ["__app","find_db_file","db","request","render_template","run_app"]

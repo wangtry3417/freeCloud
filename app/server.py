@@ -1,6 +1,6 @@
 from . import _app,find_db_file,db,request,render_template
 from .models import BaseModel
-from sqlalchemy import inspect
+from sqlalchemy import inspect,text
 
 #可以設置app的名字
 app = _app()
@@ -53,7 +53,7 @@ def do_event(statement=None):
 
         elif statement == "selectAll":
             table_name = request.args.get("table_name")
-            records = db.session.execute(f"SELECT * FROM {table_name}").fetchall()
+            records = db.session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
             return render_template("query.html", statement=statement, records=records, table_name=table_name)
 
         return render_template("query.html", statement=statement)
@@ -65,7 +65,7 @@ def do_event(statement=None):
             columns = [k for k in data.keys() if k != 'table_name']
             values = [data[k][0] for k in columns]
 
-            insert_query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in columns])})"
+            insert_query = text(f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in columns])})")
             db.session.execute(insert_query, values)
             db.session.commit()
             return render_template("query.html", statement="記錄已插入成功", table_name=table_name)
@@ -74,7 +74,7 @@ def do_event(statement=None):
 
 @app.route("/query/table/<table_name>")
 def query_table(table_name):
-    records = db.session.execute(f"SELECT * FROM {table_name}").fetchall()
+    records = db.session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
     return render_template("query.html", table_name=table_name, records=records)
 
 def run_app(port=5000):

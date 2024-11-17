@@ -1,7 +1,7 @@
 from . import _app,find_db_file,db,request,render_template
 from .models import BaseModel
 from sqlalchemy import inspect,text
-import re
+import re,html
 
 #可以設置app的名字
 app = _app()
@@ -72,7 +72,7 @@ def do_event(statement=None):
                         
                         # 處理值，解碼 HTML 編碼並轉換成正確格式
                         values = [
-                            re.sub(r'&#39;|‘|’', "'", value.strip().strip("'"))
+                            html.unescape(value.strip().strip("'"))
                             for value in parts[2].strip().strip(';').split(",")
                         ]
 
@@ -106,10 +106,10 @@ def do_event(statement=None):
                 else:
                     raise ValueError("不支援的指令格式。")
             except Exception as e:
-                if values_tuple:
-                  return render_template("query.html", message=f"錯誤: {str(e)} values={values_tuple}")
-                else:
-                  return render_template("query.html", message=f"錯誤: {str(e)}")
+                message = f"錯誤: {str(e)}"
+                if 'values_tuple' in locals():
+                    message += f" values={values_tuple}"
+                return render_template("query.html", message=message)
 
     return "請求方式不支援", 405  # 返回 405 方法不被允許
 

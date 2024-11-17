@@ -142,6 +142,30 @@ def try_db():
                 db.create_all()
 
                 return jsonify({"message": f"資料表 '{table_name}' 已經建立。"}), 201
+        # Insert
+        elif "Insert" in tryDB_input:
+            parts = tryDB_input.split("->")
+            if len(parts) == 3:
+                table_name = parts[0].split()[1].strip()
+                fields = [field.strip() for field in parts[1].strip().split(",")]
+                values = [value.strip().strip("'") for value in parts[2].strip().split(",")]
+
+                if len(fields) != len(values):
+                    return jsonify({"error": "字段數量與值數量不匹配。"}), 400
+
+                model = dynamic_models.get(table_name.lower())
+                if model is None:
+                    return jsonify({"error": f"資料表 '{table_name}' 不存在。"}), 404
+
+                # 創建新實例
+                new_entry = model(**{field: value for field, value in zip(fields, values)})
+                db.session.add(new_entry)
+                db.session.commit()
+
+                return jsonify({"message": "記錄已插入成功。"}), 201
+
+            else:
+                return jsonify({"error": "INSERT 語句格式不正確。"}), 400
 
         # Delete Table
         elif "delete table" in tryDB_input:

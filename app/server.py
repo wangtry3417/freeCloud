@@ -143,26 +143,26 @@ def do_event():
                       if not fields:
                         return render_template("query.html", message="字段不存在。")
 
-                     attributes = {'__tablename__': table_name.lower()}
+                      attributes = {'__tablename__': table_name.lower()}
 
-                     for field, field_type in fields:
-                       if field_type == "String":
-                         attributes[field] = db.Column(db.String(80))
-                       elif field_type == "Integer":
-                         attributes[field] = db.Column(db.Integer)
-                       elif field_type == "Float":
-                         attributes[field] = db.Column(db.Float)
-                       elif field_type == "Boolean":
-                         attributes[field] = db.Column(db.Boolean)
-                       else:
-                         return jsonify({"error": f"不支援的字段類型: {field_type}。"}), 400
+                      for field, field_type in fields:
+                        if field_type == "String":
+                          attributes[field] = db.Column(db.String(80))
+                        elif field_type == "Integer":
+                          attributes[field] = db.Column(db.Integer)
+                        elif field_type == "Float":
+                          attributes[field] = db.Column(db.Float)
+                        elif field_type == "Boolean":
+                          attributes[field] = db.Column(db.Boolean)
+                        else:
+                          return jsonify({"error": f"不支援的字段類型: {field_type}。"}), 400
 
-                       # 創建新的模型類
-                       new_model = type(table_name, (BaseModel,), attributes)
-                       dynamic_models[table_name.lower()] = new_model
-                       db.create_all()
+                        # 創建新的模型類
+                        new_model = type(table_name, (BaseModel,), attributes)
+                        dynamic_models[table_name.lower()] = new_model
+                        db.create_all()
 
-                       return jsonify({"message": f"資料表 '{table_name}' 已經建立。"}), 201
+                        return jsonify({"message": f"資料表 '{table_name}' 已經建立。"}), 201
 
                 else:
                     raise ValueError("不支援的指令格式。")

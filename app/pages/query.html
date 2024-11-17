@@ -47,7 +47,7 @@
                     {% for record in records %}
                     <tr>
                         {% for field in record.__table__.columns %}
-                            <td>{{ getattr(record, field.name) }}</td>
+                            <td>{{ record[field.name] }}</td> <!-- 使用 record[field.name] -->
                         {% endfor %}
                     </tr>
                     {% endfor %}

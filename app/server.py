@@ -44,7 +44,8 @@ def do_event(statement=None):
     if request.method == "GET":
         if statement is None:
             # 獲取所有資料表名稱
-            tables = db.engine.table_names()
+            inspector = inspect(db.engine)
+            tables = inspector.get_table_names()
             if tables:
                 return render_template("query.html", tables=tables)
             else:

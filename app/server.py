@@ -120,13 +120,11 @@ def try_db():
                 table_name = parts[0].split()[2].strip()
                 fields_str = parts[1].strip()
 
-                # 使用 eval 解析元組列表
-                try:
-                    fields = eval(fields_str)
-                except Exception:
-                    return jsonify({"error": "字段格式不正確，應該是元組列表。"}), 400
+                # 使用正則表達式解析元組
+                pattern = r"\('([^']+)',\s*'([^']+)'\)"
+                fields = re.findall(pattern, fields_str)
 
-                if not isinstance(fields, list):
+                if not fields:
                     return jsonify({"error": "字段格式不正確，應該是元組列表。"}), 400
 
                 attributes = {'__tablename__': table_name.lower()}

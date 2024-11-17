@@ -10,3 +10,7 @@ db.init_app(app)
 @app.route("/")
 def index():
   return "Hello Page"
+
+@app.route("/query/<statement>",methods=["GET","POST"])
+def do_event(statement):
+  if 

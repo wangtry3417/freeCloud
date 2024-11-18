@@ -11,7 +11,7 @@ class Users(BaseModel):
   gender = db.Column(db.String(10))
   age = db.Column(db.Integer)
 
-with app.app_context(:
+with app.app_context():
   Users.create(username='Jack',active=True,gender='M',age=19)
   Users.create(username='Ben',active=True,gender='M',age=23)
   Users.create(username='Ken',active=True,gender='M',age=32)

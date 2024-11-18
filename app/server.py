@@ -1,6 +1,6 @@
 from . import _app, find_db_file, db, request, render_template, jsonify
 from .models import BaseModel
-from sqlalchemy import inspect
+from sqlalchemy import inspect,text
 from sqlalchemy.exc import SQLAlchemyError
 import html,re
 
@@ -244,7 +244,7 @@ def try_db():
                 table_name = parts[1].strip()
                 model = dynamic_models.get(table_name.lower())
                 if model:
-                    db.session.execute(f"DROP TABLE {table_name.lower()}")
+                    db.session.execute(text(f"DROP TABLE {table_name.lower()}"))
                     del dynamic_models[table_name.lower()]
                     db.session.commit()
                     return jsonify({"message": f"資料表 '{table_name}' 已被刪除。"}), 200

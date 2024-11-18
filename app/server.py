@@ -240,8 +240,8 @@ def try_db():
               return jsonify({"message": "記錄已插入成功"}), 200
             else:
               return jsonify({"error": f"模型 '{table_name}' 不存在。"}), 404
-        else:
-          return jsonify({"error": "請使用正確格式: Insert <table_name> -> <fields> -> <values>"}), 400
+          else:
+            return jsonify({"error": "請使用正確格式: Insert <table_name> -> <fields> -> <values>"}), 400
         # Delete Table
         elif "delete table" in tryDB_input:
             parts = tryDB_input.split("->")

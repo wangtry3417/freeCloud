@@ -14,7 +14,8 @@ class Users(BaseModel):
   gender = db.Column(db.String(10))
   age = db.Column(db.Integer)
 
-with app.app_context():
+@app.before_first_request
+def init_table():
   db.create_all()
   Users.create(username='Jack',active=True,gender='M',age=19)
   Users.create(username='Ben',active=True,gender='M',age=23)

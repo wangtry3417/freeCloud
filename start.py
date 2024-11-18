@@ -9,7 +9,12 @@ class Users(BaseModel):
   active = db.Column(db.Boolean)
   gender = db.Column(db.String(10))
   age = db.Column(db.Integer)
-  
+
+Users.create(username='Jack',active=True,gender='M',age=19)
+Users.create(username='Ben',active=True,gender='M',age=23)
+Users.create(username='Ken',active=True,gender='M',age=32)
+Users.create(username='Crystal',active=True,gender='F',age=67)
+Users._commit()
 
 if not os.path.exists("main.db"):
   open("main.db","a").close()

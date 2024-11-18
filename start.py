@@ -4,6 +4,9 @@ from app.models import BaseModel
 from app import db
 from app.server import app
 
+if not os.path.exists("main.db"):
+  open("main.db","a").close()
+
 class Users(BaseModel):
   __tablename__ = 'users'
   username = db.Column(db.String(50))
@@ -18,9 +21,6 @@ with app.app_context():
   Users.create(username='Ken',active=True,gender='M',age=32)
   Users.create(username='Crystal',active=True,gender='F',age=67)
   Users._commit()
-
-if not os.path.exists("main.db"):
-  open("main.db","a").close()
 
 #啟動flask-app
 if __name__ == "__main__":

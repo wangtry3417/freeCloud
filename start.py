@@ -1,5 +1,16 @@
 import os
 
+from app.models import BaseModel
+from app import db
+
+class Users(BaseModel):
+  __tablename__ = 'users'
+  username = db.Column(db.String(50))
+  active = db.Column(db.Boolean)
+  gender = db.Column(db.String(10))
+  age = db.Column(db.Integer)
+  
+
 if not os.path.exists("main.db"):
   open("main.db","a").close()
 

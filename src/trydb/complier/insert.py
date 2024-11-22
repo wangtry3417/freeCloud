@@ -28,4 +28,4 @@ def handle_insert(tryDB_input, db):
         session.rollback()
         return {"error": f"插入失敗: {e}"}
     finally:
-        db.close_session(session)
+        db._close_session(session)

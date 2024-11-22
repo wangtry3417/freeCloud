@@ -15,17 +15,17 @@ def handle_insert(tryDB_input, db):
 
     session = db.get_session()
     try:
-        # 使用反射獲取模型
-        model = db.get_model(table_name)  # 假設你有一個方法來獲取模型
-        if model is None:
-            return {"error": f"模型 {table_name} 不存在。"}
+        table = db.get_table(table_name)
+        if table is None:
+            return {"error": f"表 {table_name} 不存在。"}
 
-        new_entry = model(**{field.strip(): value for field, value in zip(parts[1].strip().split(","), values)})
-        session.add(new_entry)
+        # 使用字典來插入數據
+        new_entry = {field.strip(): value for field, value in zip(parts[1].strip().split(","), values)}
+        session.execute(table.insert().values(new_entry))
         session.commit()
         return {"message": "記錄已插入成功", "table_name": table_name}
     except SQLAlchemyError as e:
         session.rollback()
         return {"error": f"插入失敗: {e}"}
     finally:
-        db._close_session(session)
+        db.close_session(session)

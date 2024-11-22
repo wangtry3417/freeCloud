@@ -7,8 +7,8 @@ class DataBase:
     def __init__(self, url: str, use_session: bool = True):
         self.engine = create_engine(url)
         self.Session = sessionmaker(bind=self.engine) if use_session else None
-        self.metadata = MetaData(bind=self.engine)
-        self.metadata.reflect()  # 反射獲取所有表
+        self.metadata = MetaData()
+        self.metadata.reflect(bind=self.engine)  # 反射獲取所有表
 
     def create_all(self):
         Model.metadata.create_all(self.engine)

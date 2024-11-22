@@ -9,15 +9,14 @@ def handle_select(tryDB_input, db):
 
     session = db.get_session()
     try:
-        model = db.get_model(table_name)  # 假設你有一個方法來獲取模型
-        if model is None:
-            return {"error": f"模型 {table_name} 不存在。"}
+        table = db.get_table(table_name)
+        if table is None:
+            return {"error": f"表 {table_name} 不存在。"}
 
-        query = session.query(model)
-        # 進行查詢邏輯處理（選擇字段、條件等）
-        # ...
-        
+        # 構建查詢
+        query = session.query(table)
         records = query.all()
-        return {"message": "查詢結果", "records": records}
+        
+        return {"message": "查詢結果", "records": [dict(record) for record in records]}
     finally:
-        db._close_session(session)
+        db.close_session(session)

@@ -16,5 +16,8 @@ class DataBase:
             return self.Session()
         else:
             raise Exception("Session not available. Ensure use_session is True.")
+    def _close_session(self,session):
+        if session:
+            session.close()
 
 __all__ = ["DataBase", "String", "Integer", "Boolean", "Model"]

@@ -1,17 +1,20 @@
-from sqlalchemy import Column, create_engine, String, Integer, Boolean, Column
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, create_engine, String, Integer, Boolean
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 Model = declarative_base()
 
-def DataBase(url:str,useSession=True : bool):
-  if useSession:
-    engine = create_engine(url)
-    return sessionmaker(bind=engine)
-  else:
-    return create_engine(url)
+class DataBase:
+    def __init__(self, url: str, use_session: bool = True):
+        self.engine = create_engine(url)
+        self.Session = sessionmaker(bind=self.engine) if use_session else None
 
-def _create_all():
-  return Model.metadata.create_all(engine)
+    def create_all(self):
+        Model.metadata.create_all(self.engine)
 
-__all__ = ["DataBase","String","Integer","Boolean","Model","Column","_create_all"]
+    def get_session(self):
+        if self.Session:
+            return self.Session()
+        else:
+            raise Exception("Session not available. Ensure use_session is True.")
+
+__all__ = ["DataBase", "String", "Integer", "Boolean", "Model"]

@@ -1,8 +1,6 @@
-from .. import declarative_base,String,Integer,Boolean,Column
-
-Model = declarative_base()
+from .. import declarative_base,String,Integer,Boolean,Column,Model
 
 class BaseModel(Model):
   id = Column(Integer,primary_key=True)
-  
-__all__ = []
+
+__all__ = ["BaseModel"]

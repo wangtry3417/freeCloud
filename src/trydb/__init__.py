@@ -1,4 +1,4 @@
-from sqlalchemy import Column, create_engine, String, Integer, Boolean
+from sqlalchemy import Column, create_engine, String, Integer, Boolean, Column
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
 
@@ -9,4 +9,4 @@ def DataBase(url:str,useSession=True : bool):
   else:
     return create_engine(url)
 
-__all__ = ["DataBase","String","Integer","Boolean","declarative_base"]
+__all__ = ["DataBase","String","Integer","Boolean","declarative_base","Column"]

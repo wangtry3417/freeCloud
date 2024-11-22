@@ -20,4 +20,4 @@ def handle_select(tryDB_input, db):
         records = query.all()
         return {"message": "查詢結果", "records": records}
     finally:
-        db.close_session(session)
+        db._close_session(session)

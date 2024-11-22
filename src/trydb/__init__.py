@@ -11,4 +11,7 @@ def DataBase(url:str,useSession=True : bool):
   else:
     return create_engine(url)
 
-__all__ = ["DataBase","String","Integer","Boolean","Model","Column"]
+def _create_all():
+  return Model.metadata.create_all(engine)
+
+__all__ = ["DataBase","String","Integer","Boolean","Model","Column","_create_all"]

@@ -2,7 +2,7 @@
 import html
 from sqlalchemy.exc import SQLAlchemyError
 
-def handle_insert(tryDB_input, dynamic_models):
+def handle_insert(tryDB_input, db):
     parts = tryDB_input.split("->")
     if len(parts) != 3:
         return {"message": "請使用正確格式進行插入。"}
@@ -13,12 +13,12 @@ def handle_insert(tryDB_input, dynamic_models):
         for value in parts[2].strip().strip(';').split(",")
     ]
 
-    model = dynamic_models.get(table_name.lower())
+    model = db.get(table_name.lower())
     if model is None:
         return {"error": f"模型 {table_name} 不存在。"}
 
     new_entry = model(**{field.strip(): value for field, value in zip(parts[1].strip().split(","), values)})
-    session = db_instance.get_session()  # 獲取新的會話
+    session = db.get_session()  # 獲取新的會話
     try:
         session.add(new_entry)
         session.commit()

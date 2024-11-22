@@ -19,5 +19,8 @@ class DataBase:
     def _close_session(self,session):
         if session:
             session.close()
+    def get_table(self, table_name):
+        # 使用反射獲取表，確保表名為小寫
+        return self.metadata.tables.get(table_name.lower())
 
 __all__ = ["DataBase", "String", "Integer", "Boolean", "Model", "Column"]

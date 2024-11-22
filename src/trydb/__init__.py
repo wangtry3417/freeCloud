@@ -20,4 +20,4 @@ class DataBase:
         if session:
             session.close()
 
-__all__ = ["DataBase", "String", "Integer", "Boolean", "Model"]
+__all__ = ["DataBase", "String", "Integer", "Boolean", "Model", "Column"]

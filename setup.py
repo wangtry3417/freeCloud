@@ -18,7 +18,6 @@ setup(
     ],
     python_requires='>=3.6',  # Python版本要求
     install_requires=[  # 安裝依賴
-        'numpy',  # 示例依賴
-        'requests',
+        'sqlalchemy'  # 示例依賴
     ],
 )
